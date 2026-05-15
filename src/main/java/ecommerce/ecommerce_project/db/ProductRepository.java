@@ -8,8 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
+    //single product
+    Optional<ProductEntity> findByProductId(Long productId);
+    //multipleproduct
     @Query("""
             SELECT p FROM ProductEntity p
             WHERE
