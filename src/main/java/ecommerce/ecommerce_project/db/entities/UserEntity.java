@@ -1,7 +1,8 @@
-package ecommerce.ecommerce_project.db;
+package ecommerce.ecommerce_project.db.entities;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
 
 @Entity
 @Table(name = "users")
@@ -35,4 +36,15 @@ public class UserEntity {
     public Long getUserId() {
         return userId;
     }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+//    setters
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
 }

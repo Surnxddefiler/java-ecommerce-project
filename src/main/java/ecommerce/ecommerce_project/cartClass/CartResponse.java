@@ -5,7 +5,7 @@ import java.util.List;
 //using this class to output cart
 public record CartResponse(
         double cartTotalPrice,
-        List<CartItem> CartItem
+        List<CartItem> cartItem
 ) {
 
 }

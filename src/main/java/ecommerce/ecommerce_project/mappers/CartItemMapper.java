@@ -1,9 +1,9 @@
 package ecommerce.ecommerce_project.mappers;
 
 import ecommerce.ecommerce_project.cartClass.CartItemRequest;
-import ecommerce.ecommerce_project.db.CartItemEntity;
-import ecommerce.ecommerce_project.db.ProductEntity;
-import ecommerce.ecommerce_project.db.UserEntity;
+import ecommerce.ecommerce_project.db.entities.CartItemEntity;
+import ecommerce.ecommerce_project.db.entities.ProductEntity;
+import ecommerce.ecommerce_project.db.entities.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component

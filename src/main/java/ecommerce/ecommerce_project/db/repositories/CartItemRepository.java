@@ -1,17 +1,23 @@
-package ecommerce.ecommerce_project.db;
+package ecommerce.ecommerce_project.db.repositories;
 
 import ecommerce.ecommerce_project.cartClass.CartItem;
+import ecommerce.ecommerce_project.db.entities.CartItemEntity;
+import jakarta.persistence.LockModeType;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> {
 
     boolean existsByProductEntityProductIdAndUserEntityUserId(Long productId, Long userId);
 
+    List<CartItemEntity> findByUserEntityUserId(Long userId);
 //    CartItemEntity findByProductEntityProductIdAndUserEntityUserId(Long productId, Long userId);
 
     //creating query for modifying quantity
@@ -31,7 +37,7 @@ JOIN productEntity p
     ON ci.productEntity.productId = p.productId
 WHERE ci.userEntity.userId = :userId
 """)
-    double getCartTotalPrice(Long userId);
+    Optional<Double> getCartTotalPrice(Long userId);
 
 @Query("""
 select new ecommerce.ecommerce_project.cartClass.CartItem(
@@ -43,5 +49,13 @@ ci.quantity*p.price
 join productEntity p on ci.productEntity.productId = p.productId
 where ci.userEntity.userId =:userId
 """)
-    List<CartItem> getAllItems(Long userId);
+    Optional<List<CartItem>> getAllItems(Long userId);
+
+//locking cart
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("""
+SELECT c FROM CartItemEntity c
+WHERE c.userEntity.userId = :userId
+""")
+List<CartItemEntity> findByUserIdForUpdate(@Param("userId") Long userId);
 }

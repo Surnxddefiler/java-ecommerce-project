@@ -1,10 +1,6 @@
-package ecommerce.ecommerce_project.db;
+package ecommerce.ecommerce_project.db.entities;
 
-import ecommerce.ecommerce_project.userClass.User;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "cart_item",
@@ -52,5 +48,7 @@ public class CartItemEntity {
         return quantity;
     }
 
-
+    public ProductEntity getProductEntity() {
+        return productEntity;
+    }
 }

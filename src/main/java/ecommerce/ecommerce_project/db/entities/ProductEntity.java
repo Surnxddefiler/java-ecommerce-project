@@ -1,4 +1,4 @@
-package ecommerce.ecommerce_project.db;
+package ecommerce.ecommerce_project.db.entities;
 
 import jakarta.persistence.*;
 

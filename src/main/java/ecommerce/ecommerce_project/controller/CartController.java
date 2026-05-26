@@ -32,7 +32,7 @@ public class CartController {
     public CartResponse getCart(
             @RequestBody @Valid Long userId
     ){
-        log.info("outputing cart");
+        log.info("outputting cart");
         return cartService.getCart(userId);
     }
 }

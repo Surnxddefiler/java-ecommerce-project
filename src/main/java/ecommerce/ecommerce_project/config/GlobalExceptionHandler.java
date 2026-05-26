@@ -2,6 +2,7 @@ package ecommerce.ecommerce_project.config;
 
 import ecommerce.ecommerce_project.exeptions.InvalidPageSizeException;
 import ecommerce.ecommerce_project.exeptions.ProductNotFoundException;
+import ecommerce.ecommerce_project.exeptions.QuantityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleProductNotFound(Exception e){
         log.error("Product not found: {}", e.getMessage());
         ErrorResponse errorResponse=new ErrorResponse("Product not found", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+    //quantity error
+    @ExceptionHandler(QuantityException.class)
+    public ResponseEntity<ErrorResponse> handleQuantity(Exception e){
+        log.error("not enough quantity in store");
+        ErrorResponse errorResponse=new ErrorResponse("not enough quantity", e.getMessage(), LocalDateTime.now());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 }

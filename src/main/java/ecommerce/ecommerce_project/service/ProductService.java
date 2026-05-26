@@ -2,9 +2,9 @@ package ecommerce.ecommerce_project.service;
 
 import ecommerce.ecommerce_project.ProductClass.Product;
 import ecommerce.ecommerce_project.ProductClass.ProductFilter;
-import ecommerce.ecommerce_project.db.*;
+import ecommerce.ecommerce_project.db.entities.ProductEntity;
+import ecommerce.ecommerce_project.db.repositories.ProductRepository;
 import ecommerce.ecommerce_project.exeptions.InvalidPageSizeException;
-import ecommerce.ecommerce_project.mappers.CartItemMapper;
 import ecommerce.ecommerce_project.mappers.ProductMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

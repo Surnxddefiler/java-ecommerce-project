@@ -1,7 +1,7 @@
 package ecommerce.ecommerce_project.mappers;
 
 import ecommerce.ecommerce_project.ProductClass.Product;
-import ecommerce.ecommerce_project.db.ProductEntity;
+import ecommerce.ecommerce_project.db.entities.ProductEntity;
 import org.springframework.stereotype.Component;
 
 @Component
