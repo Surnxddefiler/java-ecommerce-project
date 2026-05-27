@@ -7,7 +7,12 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+uniqueConstraints = {
+        @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
+        @UniqueConstraint(name = "uk_users_username", columnNames = "username")
+}
+)
 public class UserEntity {
     @Column(name = "user_id")
     @Id
@@ -15,9 +20,9 @@ public class UserEntity {
     Long userId;
     @Column(name = "username", nullable = false)
     String username;
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", nullable = false)
     String email;
-    @Column(name = "password", unique = true, nullable = false)
+    @Column(name = "password", nullable = false)
     String password;
     @Column(name = "balance")
     Double balance;
