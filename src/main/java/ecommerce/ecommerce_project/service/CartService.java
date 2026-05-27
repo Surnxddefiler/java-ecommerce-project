@@ -11,7 +11,6 @@ import ecommerce.ecommerce_project.db.repositories.ProductRepository;
 import ecommerce.ecommerce_project.db.repositories.UserRepository;
 import ecommerce.ecommerce_project.exeptions.ProductNotFoundException;
 import ecommerce.ecommerce_project.exeptions.UserNotFoundException;
-import ecommerce.ecommerce_project.helpers.ExceptionHelper;
 import ecommerce.ecommerce_project.mappers.CartItemMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -28,20 +27,17 @@ public class CartService {
     private final UserRepository userRepository;
     private final CartItemMapper cartItemMapper;
     private final CartItemRepository cartItemRepository;
-    private final ExceptionHelper exceptionHelper;
 
-    public CartService(ProductRepository productRepository, UserRepository userRepository, CartItemMapper cartItemMapper, CartItemRepository cartItemRepository, ExceptionHelper exceptionHelper){
+    public CartService(ProductRepository productRepository, UserRepository userRepository, CartItemMapper cartItemMapper, CartItemRepository cartItemRepository){
         this.productRepository=productRepository;
         this.userRepository=userRepository;
         this.cartItemMapper=cartItemMapper;
         this.cartItemRepository=cartItemRepository;
-        this.exceptionHelper=exceptionHelper;
     }
 
     //adding to cart
     @Transactional
-    public String addToCart(@Valid CartItemRequest cart) throws InterruptedException {
-        Thread.sleep(5000);
+    public String addToCart(@Valid CartItemRequest cart) {
         //checking if the product exists
         ProductEntity productEntity=productRepository.findByProductId(cart.productId()).orElseThrow(()-> new ProductNotFoundException(cart.productId()));
         //searching for a user
@@ -64,7 +60,6 @@ public class CartService {
     //getting total price for cart
     public CartResponse getCart(Long userId) {
 
-        exceptionHelper.userCheck(userId);
         //getting total cart price
         double cartTotalPrice= cartItemRepository.getCartTotalPrice(userId).orElse(0.0);
         //getting all products

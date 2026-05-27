@@ -24,7 +24,7 @@ public class CartController {
     @PostMapping("/add-to-cart")
     public String addToCart(
             @RequestBody @Valid CartItemRequest cart
-    ) throws InterruptedException {
+    ) {
         log.info("adding product with id: {} to user cart with id: {}", cart.productId(), cart.userId());
         return cartService.addToCart(cart);
     }

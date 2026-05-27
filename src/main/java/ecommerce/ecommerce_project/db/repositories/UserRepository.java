@@ -18,4 +18,6 @@ SELECT u FROM UserEntity u
 WHERE u.userId=:id
 """)
     Optional<UserEntity> findByIdForUpdate(@Param("id") Long id);
+
+    boolean existsByEmail(String email);
 }

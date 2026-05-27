@@ -1,5 +1,6 @@
 package ecommerce.ecommerce_project.config;
 
+import ecommerce.ecommerce_project.exeptions.EmailException;
 import ecommerce.ecommerce_project.exeptions.InvalidPageSizeException;
 import ecommerce.ecommerce_project.exeptions.ProductNotFoundException;
 import ecommerce.ecommerce_project.exeptions.QuantityException;
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> globalExceptionHandler(Exception e){
         log.error("exception happened", e);
-        ErrorResponse errorResponse= new ErrorResponse("Error happened", "something went wrong: "+ e.getMessage(), LocalDateTime.now());
+        ErrorResponse errorResponse= new ErrorResponse("Error happened", "Server Error ", LocalDateTime.now());
         return ResponseEntity.internalServerError().body(errorResponse);
     }
     @ExceptionHandler(InvalidPageSizeException.class)
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleQuantity(Exception e){
         log.error("not enough quantity in store");
         ErrorResponse errorResponse=new ErrorResponse("not enough quantity", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<ErrorResponse> handleEmail(Exception e){
+        log.error("Email exception");
+        ErrorResponse errorResponse=new ErrorResponse("Email already exists", e.getMessage(), LocalDateTime.now());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 }

@@ -1,10 +1,8 @@
 package ecommerce.ecommerce_project.service;
 
-import ecommerce.ecommerce_project.cartClass.CartItem;
 import ecommerce.ecommerce_project.db.entities.*;
 import ecommerce.ecommerce_project.db.repositories.*;
 import ecommerce.ecommerce_project.exeptions.*;
-import ecommerce.ecommerce_project.helpers.ExceptionHelper;
 import ecommerce.ecommerce_project.mappers.OrderMapper;
 import ecommerce.ecommerce_project.orderClass.Order;
 import ecommerce.ecommerce_project.orderClass.OrderStatus;
@@ -76,7 +74,6 @@ public class OrderService {
         cartItemRepository.deleteAll(cartItemEntities);
         return orderMapper.toOrder(orderEntity);
         //create orderItem response
-
     };
 
 

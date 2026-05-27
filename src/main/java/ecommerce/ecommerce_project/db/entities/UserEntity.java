@@ -1,6 +1,8 @@
 package ecommerce.ecommerce_project.db.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
@@ -47,4 +49,7 @@ public class UserEntity {
         this.balance = balance;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
