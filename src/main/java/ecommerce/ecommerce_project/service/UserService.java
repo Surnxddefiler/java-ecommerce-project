@@ -3,8 +3,11 @@ package ecommerce.ecommerce_project.service;
 import ecommerce.ecommerce_project.db.entities.UserEntity;
 import ecommerce.ecommerce_project.db.repositories.UserRepository;
 import ecommerce.ecommerce_project.exeptions.EmailException;
+import ecommerce.ecommerce_project.exeptions.UserNotFoundException;
 import ecommerce.ecommerce_project.exeptions.UsernameException;
+import ecommerce.ecommerce_project.exeptions.WrondPasswordException;
 import ecommerce.ecommerce_project.mappers.UserMapper;
+import ecommerce.ecommerce_project.userClass.UserLogin;
 import ecommerce.ecommerce_project.userClass.UserRequest;
 import jakarta.validation.Valid;
 import org.hibernate.exception.ConstraintViolationException;
@@ -17,11 +20,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public String registerUser(@Valid UserRequest userRequest) {
@@ -57,5 +62,15 @@ public class UserService {
         }
         throw e;
 
+    }
+
+    public String loginUser(@Valid UserLogin userLogin) {
+        //USER
+        UserEntity users=userRepository.findByEmail(userLogin.email()).orElseThrow(UserNotFoundException::new);
+        if (!passwordEncoder.matches(userLogin.password(), users.getPassword())){
+           throw new WrondPasswordException();
+        }
+
+        return jwtService.generateToken(userLogin.email());
     }
 }

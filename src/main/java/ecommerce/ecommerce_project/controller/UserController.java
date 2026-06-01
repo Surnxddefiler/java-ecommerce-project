@@ -1,6 +1,7 @@
 package ecommerce.ecommerce_project.controller;
 
 import ecommerce.ecommerce_project.service.UserService;
+import ecommerce.ecommerce_project.userClass.UserLogin;
 import ecommerce.ecommerce_project.userClass.UserRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -32,4 +33,10 @@ public class UserController {
         log.info("creating new user");
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.registerUser(userRequest));
     }
+    //login user
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody @Valid UserLogin userLogin){
+        log.info("logging user");
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.loginUser(userLogin));
+    };
 }

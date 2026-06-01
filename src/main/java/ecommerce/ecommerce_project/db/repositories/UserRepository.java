@@ -20,4 +20,7 @@ WHERE u.userId=:id
     Optional<UserEntity> findByIdForUpdate(@Param("id") Long id);
 
     boolean existsByEmail(String email);
+
+    //for userDetails
+    Optional<UserEntity> findByEmail(String email);
 }

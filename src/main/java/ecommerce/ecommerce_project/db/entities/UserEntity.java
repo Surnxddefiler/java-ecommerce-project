@@ -48,7 +48,15 @@ public class UserEntity {
         return balance;
     }
 
-//    setters
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    //    setters
 
     public void setBalance(Double balance) {
         this.balance = balance;

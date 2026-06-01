@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -75,4 +76,18 @@ public class GlobalExceptionHandler {
       ErrorResponse errorResponse=new ErrorResponse("Username already exists", e.getMessage(), LocalDateTime.now());
       return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     };
+    //handle request method not supported
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleRequestMethodNotSupported(Exception e){
+        log.error("method not supported");
+        ErrorResponse errorResponse=new ErrorResponse("wrong request method", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    };
+    //handle wrong password
+    @ExceptionHandler(WrondPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleWrongPassword(Exception e){
+        log.error("wrong password");
+        ErrorResponse errorResponse=new ErrorResponse("wrong password", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
