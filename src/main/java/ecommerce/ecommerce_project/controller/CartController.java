@@ -7,6 +7,8 @@ import ecommerce.ecommerce_project.service.CartService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,16 +25,17 @@ public class CartController {
     //adding product to cart
     @PostMapping("/add-to-cart")
     public String addToCart(
+            @AuthenticationPrincipal UserDetails userDetails, //getting email from Jwt token
             @RequestBody @Valid CartItemRequest cart
     ) {
-        log.info("adding product with id: {} to user cart with id: {}", cart.productId(), cart.userId());
-        return cartService.addToCart(cart);
+        log.info("adding product with id: {} to user cart with email: {}", cart.productId(), userDetails.getUsername());
+        return cartService.addToCart(cart, userDetails.getUsername());
     }
-    @PostMapping()
+    @GetMapping()
     public CartResponse getCart(
-            @RequestBody @Valid Long userId
+            @AuthenticationPrincipal UserDetails userDetails //getting email from Jwt token
     ){
         log.info("outputting cart");
-        return cartService.getCart(userId);
+        return cartService.getCart(userDetails.getUsername());
     }
 }

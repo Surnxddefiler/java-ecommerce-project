@@ -37,6 +37,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody @Valid UserLogin userLogin){
         log.info("logging user");
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.loginUser(userLogin));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.loginUser(userLogin));
     };
 }

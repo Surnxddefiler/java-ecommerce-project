@@ -5,10 +5,9 @@ import ecommerce.ecommerce_project.service.OrderService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
@@ -23,9 +22,9 @@ public class OrderController {
 
     @PostMapping()
     public Order postOrder(
-            @RequestBody @Valid Long userId
+            @AuthenticationPrincipal UserDetails userDetails //getting email from Jwt token
     ){
         log.info("Creating Order");
-        return orderService.postOrder(userId);
+        return orderService.postOrder(userDetails.getUsername());
     }
 }

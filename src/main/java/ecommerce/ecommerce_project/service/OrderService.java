@@ -33,11 +33,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order postOrder(@Valid Long userId) {
+    public Order postOrder(@Valid String email) {
         //search user
-        UserEntity userEntity=userRepository.findByIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity=userRepository.findByEmailForUpdate(email).orElseThrow(UserNotFoundException::new);
         //getting total balance
-        Double totalPrice=cartItemRepository.getCartTotalPrice(userId).orElseThrow(EmptyCartException::new);
+        Double totalPrice=cartItemRepository.getCartTotalPrice(email).orElseThrow(EmptyCartException::new);
         //checking balance
         if(userEntity.getBalance()<totalPrice){
             throw new BalanceException();
@@ -52,7 +52,7 @@ public class OrderService {
         //refer it to user
         orderEntity.setUserEntity(userEntity);
         //grabbing all item entities
-        List<CartItemEntity> cartItemEntities=cartItemRepository.findByUserIdForUpdate(userId);
+        List<CartItemEntity> cartItemEntities=cartItemRepository.findByEmailForUpdate(email);
         //creating new array for order Items
         List<OrderItemEntity> orderItemEntities=new ArrayList<>();
         cartItemEntities.forEach(cartItem -> {
