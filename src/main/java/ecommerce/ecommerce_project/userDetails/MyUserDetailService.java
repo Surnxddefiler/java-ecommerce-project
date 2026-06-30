@@ -1,16 +1,14 @@
-package ecommerce.ecommerce_project.service;
+package ecommerce.ecommerce_project.userDetails;
 
 import ecommerce.ecommerce_project.db.entities.UserEntity;
 import ecommerce.ecommerce_project.db.repositories.UserRepository;
 import ecommerce.ecommerce_project.exeptions.UserNotFoundException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.List;
 
 @Service
 public class MyUserDetailService implements UserDetailsService { //implementing UserDetailService for getting user details
@@ -24,16 +22,16 @@ public class MyUserDetailService implements UserDetailsService { //implementing 
 
     //finction to get user info
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        //replacing username string to long userId
+        Long userId= Long.valueOf(username);
+
         //trying to find user
-        UserEntity userEntity=userRepository.findByEmail(username).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity=userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
 
 
 
-        return new org.springframework.security.core.userdetails.User(
-                userEntity.getEmail(),
-                userEntity.getPassword(),
-                Collections.emptyList()
-        );
+        //returning custom userDetails
+        return new CustomUserDetails(userId);
     }
 }

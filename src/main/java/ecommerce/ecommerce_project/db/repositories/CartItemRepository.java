@@ -35,9 +35,9 @@ SELECT
     SUM(ci.quantity * p.price) AS total_cart_price FROM CartItemEntity ci
 JOIN productEntity p
     ON ci.productEntity.productId = p.productId
-WHERE ci.userEntity.email = :email
+WHERE ci.userEntity.userId = :userId
 """)
-    Optional<Double> getCartTotalPrice(String email);
+    Optional<Double> getCartTotalPrice(Long userId);
 
 @Query("""
 select new ecommerce.ecommerce_project.cartClass.CartItem(
@@ -47,15 +47,15 @@ ci.quantity,
 ci.quantity*p.price
 ) from CartItemEntity ci
 join productEntity p on ci.productEntity.productId = p.productId
-where ci.userEntity.email =:email
+where ci.userEntity.userId =:userId
 """)
-    Optional<List<CartItem>> getAllItems(String email);
+    Optional<List<CartItem>> getAllItems(Long userId);
 
 //locking cart
 @Lock(LockModeType.PESSIMISTIC_WRITE)
 @Query("""
 SELECT c FROM CartItemEntity c
-WHERE c.userEntity.email = :email
+WHERE c.userEntity.userId = :userId
 """)
-List<CartItemEntity> findByEmailForUpdate(@Param("email") String email);
+List<CartItemEntity> findByUserIdForUpdate(@Param("userId") Long userId);
 }

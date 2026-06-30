@@ -56,6 +56,10 @@ public class UserEntity {
         return password;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     //    setters
 
     public void setBalance(Double balance) {
@@ -64,5 +68,13 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

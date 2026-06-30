@@ -15,9 +15,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
 SELECT u FROM UserEntity u
-WHERE u.email=:email
+WHERE u.userId=:userId
 """)
-    Optional<UserEntity> findByEmailForUpdate(@Param("email") String email);
+    Optional<UserEntity> findByUserIdForUpdate(@Param("userId") Long userId);
 
     boolean existsByEmail(String email);
 

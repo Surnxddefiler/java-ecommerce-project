@@ -2,6 +2,7 @@ package ecommerce.ecommerce_project.controller;
 
 import ecommerce.ecommerce_project.orderClass.Order;
 import ecommerce.ecommerce_project.service.OrderService;
+import ecommerce.ecommerce_project.userDetails.CustomUserDetails;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,9 @@ public class OrderController {
 
     @PostMapping()
     public Order postOrder(
-            @AuthenticationPrincipal UserDetails userDetails //getting email from Jwt token
+            @AuthenticationPrincipal CustomUserDetails customUserDetails //getting email from Jwt token
     ){
         log.info("Creating Order");
-        return orderService.postOrder(userDetails.getUsername());
+        return orderService.postOrder(customUserDetails.getUserId());
     }
 }

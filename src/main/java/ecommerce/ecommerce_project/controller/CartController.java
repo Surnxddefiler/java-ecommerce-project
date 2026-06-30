@@ -4,6 +4,7 @@ import ecommerce.ecommerce_project.ProductClass.Product;
 import ecommerce.ecommerce_project.cartClass.CartItemRequest;
 import ecommerce.ecommerce_project.cartClass.CartResponse;
 import ecommerce.ecommerce_project.service.CartService;
+import ecommerce.ecommerce_project.userDetails.CustomUserDetails;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +26,17 @@ public class CartController {
     //adding product to cart
     @PostMapping("/add-to-cart")
     public String addToCart(
-            @AuthenticationPrincipal UserDetails userDetails, //getting email from Jwt token
+            @AuthenticationPrincipal CustomUserDetails customUserDetails, //getting email from Jwt token
             @RequestBody @Valid CartItemRequest cart
     ) {
-        log.info("adding product with id: {} to user cart with email: {}", cart.productId(), userDetails.getUsername());
-        return cartService.addToCart(cart, userDetails.getUsername());
+        log.info("adding product with id: {} to user cart with email: {}", cart.productId(), customUserDetails.getUsername());
+        return cartService.addToCart(cart, customUserDetails.getUserId());
     }
     @GetMapping()
     public CartResponse getCart(
-            @AuthenticationPrincipal UserDetails userDetails //getting email from Jwt token
+            @AuthenticationPrincipal CustomUserDetails customUserDetails //getting email from Jwt token
     ){
         log.info("outputting cart");
-        return cartService.getCart(userDetails.getUsername());
+        return cartService.getCart(customUserDetails.getUserId());
     }
 }

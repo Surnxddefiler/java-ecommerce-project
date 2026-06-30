@@ -4,17 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import javax.print.attribute.standard.Severity;
 import java.security.Key;
-import java.security.PublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,25 +22,21 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public String generateToken(@NotNull @NotBlank @Email String email) {
+    public String generateToken(Long userId, String email) {
         //claims
         Map<String, Object> claims = new HashMap<>();
-
+        claims.put("email", email);
         return Jwts.builder()
                 .claims(claims)//adding claims
-                .subject(email)//main subject(email)
+                .subject(userId.toString())//main subject(userId)
                 .issuedAt(new Date(System.currentTimeMillis()))// token start
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))//token end
-                .signWith(getKey())
+                .signWith(getSigningKey())
                 .compact();
     }
 
-    //decoding secret key to sign token
-    private Key getKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
-    }
 
-    public String extractEmail(String token) {
+    public String extractUserId(String token) {
         return extractClaims(token, Claims::getSubject);
     }
 
@@ -58,6 +49,7 @@ public class JwtService {
         return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
     }
 
+    //decoding secret key to sign token
     private SecretKey getSigningKey() {
     byte[] keyBytes=Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
@@ -65,15 +57,15 @@ public class JwtService {
 
     //validating token
     public boolean validateToken(String token, UserDetails userDetails){
-        //extracting email
-        final String email=extractEmail(token);
-        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        //extracting userId
+        final String userId= extractUserId(token);
+        return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
     //checking if token is expired
     private boolean isTokenExpired(String token){
         return extractExperationDate(token).before(new Date());
     };
-    //getting experation date
+    //getting expiration date
     private Date extractExperationDate(String token){
         return extractClaims(token, Claims::getExpiration);
     }

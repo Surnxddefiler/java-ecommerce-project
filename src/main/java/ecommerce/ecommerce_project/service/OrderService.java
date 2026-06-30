@@ -7,7 +7,6 @@ import ecommerce.ecommerce_project.mappers.OrderMapper;
 import ecommerce.ecommerce_project.orderClass.Order;
 import ecommerce.ecommerce_project.orderClass.OrderStatus;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,11 +32,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order postOrder(@Valid String email) {
+    public Order postOrder(Long userId) {
         //search user
-        UserEntity userEntity=userRepository.findByEmailForUpdate(email).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
         //getting total balance
-        Double totalPrice=cartItemRepository.getCartTotalPrice(email).orElseThrow(EmptyCartException::new);
+        Double totalPrice=cartItemRepository.getCartTotalPrice(userId).orElseThrow(EmptyCartException::new);
         //checking balance
         if(userEntity.getBalance()<totalPrice){
             throw new BalanceException();
@@ -52,7 +51,7 @@ public class OrderService {
         //refer it to user
         orderEntity.setUserEntity(userEntity);
         //grabbing all item entities
-        List<CartItemEntity> cartItemEntities=cartItemRepository.findByEmailForUpdate(email);
+        List<CartItemEntity> cartItemEntities=cartItemRepository.findByUserIdForUpdate(userId);
         //creating new array for order Items
         List<OrderItemEntity> orderItemEntities=new ArrayList<>();
         cartItemEntities.forEach(cartItem -> {

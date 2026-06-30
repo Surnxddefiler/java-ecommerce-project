@@ -37,11 +37,11 @@ public class CartService {
 
     //adding to cart
     @Transactional
-    public String addToCart(@Valid CartItemRequest cart, String email) {
+    public String addToCart(@Valid CartItemRequest cart, Long userId) {
         //checking if the product exists
         ProductEntity productEntity=productRepository.findByProductId(cart.productId()).orElseThrow(()-> new ProductNotFoundException(cart.productId()));
         //searching for a user
-        UserEntity userEntity=userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity=userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
 
 
 //        checking if product is already in cart, if it is just adding new quantity
@@ -58,12 +58,12 @@ public class CartService {
     }
 
     //getting total price+all products for cart
-    public CartResponse getCart(String email) {
+    public CartResponse getCart(Long userId) {
 
         //getting total cart price
-        double cartTotalPrice= cartItemRepository.getCartTotalPrice(email).orElse(0.0);
+        double cartTotalPrice= cartItemRepository.getCartTotalPrice(userId).orElse(0.0);
         //getting all products
-        List<CartItem> cartItems=cartItemRepository.getAllItems(email).orElse(new ArrayList<>());
+        List<CartItem> cartItems=cartItemRepository.getAllItems(userId).orElse(new ArrayList<>());
 
         return new CartResponse(cartTotalPrice, cartItems);
 

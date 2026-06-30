@@ -1,42 +1,34 @@
 package ecommerce.ecommerce_project.controller;
 
 import ecommerce.ecommerce_project.service.UserService;
-import ecommerce.ecommerce_project.userClass.UserLogin;
-import ecommerce.ecommerce_project.userClass.UserRequest;
-import jakarta.validation.Valid;
+import ecommerce.ecommerce_project.userClass.UserEditRequest;
+import ecommerce.ecommerce_project.userDetails.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user/me")
 public class UserController {
 
-
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    //register user
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(
-            @RequestBody @Valid UserRequest userRequest
-    ){
-        log.info("creating new user");
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.registerUser(userRequest));
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
+    @PatchMapping()
+    public ResponseEntity<String> editProfile(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails, //getting user from jwt
+            @RequestBody UserEditRequest userEditRequest
+            ){
+        log.info("trying to edit new user");
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(this.userService.editUser(customUserDetails.getUserId() ,userEditRequest));
     }
-    //login user
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody @Valid UserLogin userLogin){
-        log.info("logging user");
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.loginUser(userLogin));
-    };
 }

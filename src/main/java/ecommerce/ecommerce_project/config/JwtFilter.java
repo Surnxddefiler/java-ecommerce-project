@@ -1,6 +1,8 @@
 package ecommerce.ecommerce_project.config;
 
 import ecommerce.ecommerce_project.service.JwtService;
+import ecommerce.ecommerce_project.userDetails.CustomUserDetails;
+import ecommerce.ecommerce_project.userDetails.MyUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,12 +24,12 @@ public class JwtFilter  extends OncePerRequestFilter {//making jwt once per requ
     //jwt service for token validation
     private final JwtService jwtService;
 //function to get user details
-    private final UserDetailsService userDetailsService;
+    private final MyUserDetailService myUserDetailService;
 
 
-    public JwtFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+    public JwtFilter(JwtService jwtService, MyUserDetailService myUserDetailService) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
+        this.myUserDetailService = myUserDetailService;
     }
 
     //overriding filter internal object (logic for filtering)
@@ -36,28 +38,28 @@ public class JwtFilter  extends OncePerRequestFilter {//making jwt once per requ
 // we will receive a bearer token
         String authHeader=request.getHeader("Authorization");//getting authorization header
         String token=null;
-        String email=null;
+        String userId=null;
         if (authHeader!=null && authHeader.startsWith("Bearer ")){
             //grabbing token
             token=authHeader.substring(7);
             //creating logic decoding for email
-            email=jwtService.extractEmail(token);
+            userId=jwtService.extractUserId(token);
         }
 
         //checking if email exists and if user is already authenticated
-        if (email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
+        if (userId!=null && SecurityContextHolder.getContext().getAuthentication()==null){
 
             //getting userDetails
-            UserDetails userDetails=userDetailsService.loadUserByUsername(email);
+            CustomUserDetails customUserDetails=myUserDetailService.loadUserByUsername(userId);
 
             //validation
-            if (jwtService.validateToken(token, userDetails)){
+            if (jwtService.validateToken(token, customUserDetails)){
 
                 //working with the next filter
                 UsernamePasswordAuthenticationToken authToken=new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        customUserDetails,
                         null,
-                        userDetails.getAuthorities()
+                        customUserDetails.getAuthorities()
                 );
                 //setting to auth token request
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

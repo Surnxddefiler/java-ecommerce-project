@@ -90,4 +90,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse=new ErrorResponse("wrong password", e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+    //User not found
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(Exception e){
+        log.error("user not found");
+        ErrorResponse errorResponse=new ErrorResponse("user not found", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
