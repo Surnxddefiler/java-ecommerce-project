@@ -7,9 +7,7 @@ import ecommerce.ecommerce_project.exeptions.UserNotFoundException;
 import ecommerce.ecommerce_project.exeptions.UsernameException;
 import ecommerce.ecommerce_project.exeptions.WrondPasswordException;
 import ecommerce.ecommerce_project.mappers.UserMapper;
-import ecommerce.ecommerce_project.userClass.UserEditRequest;
-import ecommerce.ecommerce_project.userClass.UserLogin;
-import ecommerce.ecommerce_project.userClass.UserRequest;
+import ecommerce.ecommerce_project.userClass.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.hibernate.exception.ConstraintViolationException;
@@ -108,4 +106,26 @@ public class UserService {
         return jwtService.generateToken(userEntity.getUserId(), userLogin.email());
     }
 
+@Transactional
+    public String changePassword(Long userId, UserPasswordRequest userPasswordRequest) {
+        //password check
+        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
+        if (!passwordEncoder.matches(userPasswordRequest.oldPassword(), userEntity.getPassword())){
+            throw new WrondPasswordException();
+        }
+        //setting new password
+        userEntity.setPassword(passwordEncoder.encode(userPasswordRequest.newPassword()));
+        userRepository.save(userEntity);
+        return "password successfully changed";
+    }
+
+    @Transactional
+    public String addBalance(Long userId, @Valid UserBalance userBalance) {
+        //finding user
+        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
+//        setting new balance
+        userEntity.setBalance(userEntity.getBalance()+userBalance.money());
+
+        return "added successfully";
+    }
 }
