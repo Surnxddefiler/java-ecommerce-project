@@ -97,4 +97,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse=new ErrorResponse("user not found", e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+    //orders not found
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(Exception e){
+        log.error("orders not found");
+        ErrorResponse errorResponse=new ErrorResponse("no orders found", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 }

@@ -7,6 +7,9 @@ import ecommerce.ecommerce_project.mappers.OrderMapper;
 import ecommerce.ecommerce_project.orderClass.Order;
 import ecommerce.ecommerce_project.orderClass.OrderStatus;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,6 +77,15 @@ public class OrderService {
         return orderMapper.toOrder(orderEntity);
         //create orderItem response
     };
+
+    public Page<Order> getOrderHistory(Long userId, Integer currentPage) {
+        //getting all orders history
+        currentPage=currentPage!=null ? currentPage : 0;
+        Pageable pageable= PageRequest.of(currentPage, 10);
+        Page<OrderEntity> orderEntities=orderRepository.findByUserEntityUserId(userId, pageable).orElseThrow(OrderNotFoundException::new);
+        //looping orders to grab their
+        return orderEntities.map(orderMapper::toOrder);
+    }
 
 
 }
