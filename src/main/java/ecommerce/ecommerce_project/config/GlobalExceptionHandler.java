@@ -1,6 +1,7 @@
 package ecommerce.ecommerce_project.config;
 
 import ecommerce.ecommerce_project.exeptions.*;
+import ecommerce.ecommerce_project.orderClass.OrderStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -103,5 +104,12 @@ public class GlobalExceptionHandler {
         log.error("orders not found");
         ErrorResponse errorResponse=new ErrorResponse("no orders found", e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+    //order delivered
+    @ExceptionHandler(OrderDeliveredException.class)
+    public ResponseEntity<ErrorResponse> handleOrderDelivered(Exception e){
+        log.error("order is already delivered");
+        ErrorResponse errorResponse=new ErrorResponse("Order Error", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }

@@ -6,6 +6,7 @@ import ecommerce.ecommerce_project.exeptions.*;
 import ecommerce.ecommerce_project.mappers.OrderMapper;
 import ecommerce.ecommerce_project.orderClass.Order;
 import ecommerce.ecommerce_project.orderClass.OrderStatus;
+import ecommerce.ecommerce_project.orderClass.OrderStatusChange;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,35 +38,33 @@ public class OrderService {
     @Transactional
     public Order postOrder(Long userId) {
         //search user
-        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
+        UserEntity userEntity = userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
         //getting total balance
-        Double totalPrice=cartItemRepository.getCartTotalPrice(userId).orElseThrow(EmptyCartException::new);
+        Double totalPrice = cartItemRepository.getCartTotalPrice(userId).orElseThrow(EmptyCartException::new);
         //checking balance
-        if(userEntity.getBalance()<totalPrice){
+        if (userEntity.getBalance() < totalPrice) {
             throw new BalanceException();
-        }
-        else {
-            userEntity.setBalance(userEntity.getBalance()-totalPrice);
+        } else {
+            userEntity.setBalance(userEntity.getBalance() - totalPrice);
             userRepository.save(userEntity);
         }
         //creating Order Entity
-        OrderEntity orderEntity=new OrderEntity();
+        OrderEntity orderEntity = new OrderEntity();
         orderEntity.setOrderStatus(OrderStatus.CREATED);
         //refer it to user
         orderEntity.setUserEntity(userEntity);
         //grabbing all item entities
-        List<CartItemEntity> cartItemEntities=cartItemRepository.findByUserIdForUpdate(userId);
+        List<CartItemEntity> cartItemEntities = cartItemRepository.findByUserIdForUpdate(userId);
         //creating new array for order Items
-        List<OrderItemEntity> orderItemEntities=new ArrayList<>();
+        List<OrderItemEntity> orderItemEntities = new ArrayList<>();
         cartItemEntities.forEach(cartItem -> {
-            orderItemEntities.add(new OrderItemEntity(null, orderEntity, cartItem.getProductEntity(), cartItem.getQuantity(),cartItem.getProductEntity().getPrice()));
+            orderItemEntities.add(new OrderItemEntity(null, orderEntity, cartItem.getProductEntity(), cartItem.getQuantity(), cartItem.getProductEntity().getPrice()));
             //checking quantity
             //making it locking
-            ProductEntity productEntity=productRepository.findByIdForUpdate(cartItem.getProductEntity().getProductId()).orElseThrow();
-            if (productEntity.getStock()<cartItem.getQuantity()){
+            ProductEntity productEntity = productRepository.findByIdForUpdate(cartItem.getProductEntity().getProductId()).orElseThrow();
+            if (productEntity.getStock() < cartItem.getQuantity()) {
                 throw new QuantityException();
-            }
-            else {
+            } else {
                 productRepository.decrementStock(productEntity.getProductId(), cartItem.getQuantity());
             }
         });
@@ -76,16 +75,33 @@ public class OrderService {
         cartItemRepository.deleteAll(cartItemEntities);
         return orderMapper.toOrder(orderEntity);
         //create orderItem response
-    };
+    }
+
+    ;
 
     public Page<Order> getOrderHistory(Long userId, Integer currentPage) {
         //getting all orders history
-        currentPage=currentPage!=null ? currentPage : 0;
-        Pageable pageable= PageRequest.of(currentPage, 10);
-        Page<OrderEntity> orderEntities=orderRepository.findByUserEntityUserId(userId, pageable).orElseThrow(OrderNotFoundException::new);
+        currentPage = currentPage != null ? currentPage : 0;
+        Pageable pageable = PageRequest.of(currentPage, 10);
+        Page<OrderEntity> orderEntities = orderRepository.findByUserEntityUserId(userId, pageable).orElseThrow(OrderNotFoundException::new);
         //looping orders to grab their
         return orderEntities.map(orderMapper::toOrder);
     }
 
 
+    //cancelling order
+    @Transactional
+    public String cancelOrder(Long orderId, Long userId) {
+        //finding order
+        OrderEntity orderEntity = orderRepository.findByOrderIdForUpdate(orderId, userId).orElseThrow(OrderNotFoundException::new);
+        //checking if order is delivered or canceled
+        if (orderEntity.getOrderStatus() == OrderStatus.DELIVERED || orderEntity.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new OrderDeliveredException(orderEntity.getOrderStatus());
+        }
+        //setting status
+        orderEntity.setOrderStatus(OrderStatus.CANCELLED);
+        //saving
+        orderRepository.save(orderEntity);
+        return "Status Changed";
+    }
 }

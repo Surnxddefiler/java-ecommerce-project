@@ -1,17 +1,14 @@
 package ecommerce.ecommerce_project.controller;
 
 import ecommerce.ecommerce_project.orderClass.Order;
+import ecommerce.ecommerce_project.orderClass.OrderStatusChange;
 import ecommerce.ecommerce_project.service.OrderService;
 import ecommerce.ecommerce_project.userDetails.CustomUserDetails;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
 
 @RestController
 @RequestMapping("/order")
@@ -40,4 +37,13 @@ public class OrderController {
         log.info("user order history");
         return orderService.getOrderHistory(customUserDetails.getUserId(), currentPage);
     }
+    //canceling order
+    @PatchMapping("/{orderId}/cancel")
+    public String changeStatus(
+            @PathVariable("orderId") Long orderId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        log.info("Cancelling order {}", orderId);
+        return orderService.cancelOrder(orderId, customUserDetails.getUserId());
+    };
 }
