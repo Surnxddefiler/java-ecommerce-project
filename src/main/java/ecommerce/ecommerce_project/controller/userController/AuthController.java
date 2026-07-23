@@ -1,4 +1,4 @@
-package ecommerce.ecommerce_project.controller;
+package ecommerce.ecommerce_project.controller.userController;
 
 import ecommerce.ecommerce_project.service.UserService;
 import ecommerce.ecommerce_project.userClass.UserLogin;

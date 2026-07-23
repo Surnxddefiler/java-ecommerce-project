@@ -1,7 +1,6 @@
-package ecommerce.ecommerce_project.controller;
+package ecommerce.ecommerce_project.controller.userController;
 
 import ecommerce.ecommerce_project.orderClass.Order;
-import ecommerce.ecommerce_project.orderClass.OrderStatusChange;
 import ecommerce.ecommerce_project.service.OrderService;
 import ecommerce.ecommerce_project.userDetails.CustomUserDetails;
 import org.slf4j.Logger;

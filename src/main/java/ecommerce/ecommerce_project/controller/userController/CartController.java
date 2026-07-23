@@ -1,6 +1,5 @@
-package ecommerce.ecommerce_project.controller;
+package ecommerce.ecommerce_project.controller.userController;
 
-import ecommerce.ecommerce_project.ProductClass.Product;
 import ecommerce.ecommerce_project.cartClass.CartItemRequest;
 import ecommerce.ecommerce_project.cartClass.CartResponse;
 import ecommerce.ecommerce_project.service.CartService;
@@ -9,7 +8,6 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

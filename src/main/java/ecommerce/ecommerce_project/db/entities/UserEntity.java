@@ -1,5 +1,6 @@
 package ecommerce.ecommerce_project.db.entities;
 
+import ecommerce.ecommerce_project.userClass.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -17,27 +18,32 @@ public class UserEntity {
     @Column(name = "user_id")
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    Long userId;
+    private Long userId;
     @Column(name = "username", nullable = false)
-    String username;
+    private String username;
     @Column(name = "email", nullable = false)
-    String email;
+    private String email;
     @Column(name = "password", nullable = false)
-    String password;
+    private String password;
     @Column(name = "balance")
-    Double balance;
+    private Double balance;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false)
+    private UserRole userRole;
     //constructors
 
     public UserEntity() {
     }
 
-    public UserEntity(Long userId, String username, String email, String password, Double balance) {
+    public UserEntity(Long userId, String username, String email, String password, Double balance, UserRole userRole) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.password = password;
         this.balance = balance;
+        this.userRole = userRole;
     }
+
     //getters
 
     public Long getUserId() {
@@ -58,6 +64,10 @@ public class UserEntity {
 
     public String getUsername() {
         return username;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
     }
 
     //    setters

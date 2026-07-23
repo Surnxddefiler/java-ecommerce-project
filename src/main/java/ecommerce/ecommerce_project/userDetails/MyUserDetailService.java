@@ -32,6 +32,6 @@ public class MyUserDetailService implements UserDetailsService { //implementing 
 
 
         //returning custom userDetails
-        return new CustomUserDetails(userId);
+        return new CustomUserDetails(userId, userEntity.getUserRole());
     }
 }

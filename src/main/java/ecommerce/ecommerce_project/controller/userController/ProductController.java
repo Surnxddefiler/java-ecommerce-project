@@ -1,11 +1,9 @@
-package ecommerce.ecommerce_project.controller;
+package ecommerce.ecommerce_project.controller.userController;
 
 import ecommerce.ecommerce_project.ProductClass.Product;
 import ecommerce.ecommerce_project.ProductClass.ProductFilter;
 import ecommerce.ecommerce_project.ProductClass.ProductOrderBy;
-import ecommerce.ecommerce_project.cartClass.CartItemRequest;
 import ecommerce.ecommerce_project.service.ProductService;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
