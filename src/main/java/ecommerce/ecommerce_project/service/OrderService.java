@@ -92,6 +92,8 @@ public class OrderService {
     //cancelling order
     @Transactional
     public String cancelOrder(Long orderId, Long userId) {
+        //getting user for adding balance
+        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
         //finding order
         OrderEntity orderEntity = orderRepository.findByOrderIdForUpdate(orderId, userId).orElseThrow(OrderNotFoundException::new);
         //checking if order is delivered or canceled
@@ -100,7 +102,13 @@ public class OrderService {
         }
         //setting status
         orderEntity.setOrderStatus(OrderStatus.CANCELLED);
-        //saving
+        //getting full sum
+        Double price=orderItemRepository.getTotalPrice(orderId).orElse(0.0);
+        //setting balance for user
+        userEntity.setBalance(userEntity.getBalance()+price);
+        //saving user
+        userRepository.save(userEntity);
+        //saving order
         orderRepository.save(orderEntity);
         return "Status Changed";
     }
