@@ -102,6 +102,16 @@ public class OrderService {
         }
         //setting status
         orderEntity.setOrderStatus(OrderStatus.CANCELLED);
+        //incrementing stock
+        orderEntity.getOrderItemEntities().forEach(orderItemEntity -> {
+            //getting product
+            Long productItemId=orderItemEntity.getProductEntity().getProductId();
+            ProductEntity productEntity=productRepository.findByIdForUpdate(productItemId).orElse(null);
+            //if not null incrementing stock
+            if (productEntity!=null){
+                productRepository.incrementStock(productItemId, orderItemEntity.getQuantity());
+            }
+        });
         //getting full sum
         Double price=orderItemRepository.getTotalPrice(orderId).orElse(0.0);
         //setting balance for user
@@ -111,5 +121,50 @@ public class OrderService {
         //saving order
         orderRepository.save(orderEntity);
         return "Status Changed";
+    }
+
+    //changing order status
+    @Transactional
+    public String changeOrderStatus(Long userId, Long orderId, OrderStatusChange orderStatusChange) {
+        //getting user
+        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
+//        order entity
+        OrderEntity orderEntity=orderRepository.findByOrderIdForUpdate(orderId, userId).orElseThrow(OrderNotFoundException::new);
+        //checking if delivered
+        if (orderEntity.getOrderStatus()==OrderStatus.DELIVERED){
+            throw new OrderDeliveredException(orderEntity.getOrderStatus());
+        }
+        //checking if order is cancelled,
+        if (orderEntity.getOrderStatus()==OrderStatus.CANCELLED){
+            //setting new balance
+            userEntity.setBalance(userEntity.getBalance()+orderItemRepository.getTotalPrice(orderId).orElse(0.00));
+            //decrementing stock of product
+            orderEntity.getOrderItemEntities().forEach((orderItemEntity)->{
+                //getting product
+                Long productId=orderItemEntity.getProductEntity().getProductId();
+                ProductEntity productEntity=productRepository.findByIdForUpdate(productId).orElse(null);
+                //checking if products exists
+                if (productEntity!=null) {
+                    //CHECKING STOCK
+                    if (productEntity.getStock() < orderItemEntity.getQuantity()) {
+                        throw new QuantityException();
+                    }
+                    productRepository.decrementStock(productId, orderItemEntity.getQuantity());
+                }
+                else { //if not deleting it from order
+                    orderItemRepository.delete(orderItemEntity);
+                }
+            });
+            //setting new order status
+            orderEntity.setOrderStatus(orderStatusChange.orderStatus());
+            //saving user balance
+            userRepository.save(userEntity);
+        }
+        else { //if everything is okay, setting new order status
+            orderEntity.setOrderStatus(orderStatusChange.orderStatus());
+        }
+        //saving order
+        orderRepository.save(orderEntity);
+        return "status changed to: "+ orderStatusChange.orderStatus();
     }
 }

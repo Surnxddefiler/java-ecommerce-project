@@ -42,4 +42,13 @@ SELECT p FROM ProductEntity p
 where p.productId=:id
 """)
     Optional<ProductEntity> findByIdForUpdate(@Param("id") Long id);
+
+    //increment for cancelling
+    @Modifying
+    @Query("""
+UPDATE ProductEntity p
+SET p.stock=p.stock+:quantity
+WHERE p.productId=:productId
+""")
+    void incrementStock(Long productId, int quantity);
 }
