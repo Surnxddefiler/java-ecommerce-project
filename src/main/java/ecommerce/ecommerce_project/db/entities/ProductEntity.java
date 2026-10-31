@@ -27,6 +27,25 @@ public class ProductEntity {
         this.stock = stock;
     }
 
+    //setters
+
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
     //getters
     public Long getProductId() {
         return productId;

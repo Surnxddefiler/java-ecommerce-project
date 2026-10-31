@@ -9,4 +9,7 @@ public class ProductMapper {
     public Product toProduct(ProductEntity productEntity){
         return new Product(productEntity.getProductId(), productEntity.getName(), productEntity.getPrice(), productEntity.getStock());
     }
+    public ProductEntity toProductEntity(Product product){
+        return new ProductEntity(null, product.name(), product.price(), product.stock());
+    }
 }
