@@ -112,4 +112,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse=new ErrorResponse("Order Error", e.getMessage(), LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
+    //invalid cart item id
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCartItemNotFound(Exception e){
+        log.error("invalid cart item id");
+        ErrorResponse errorResponse=new ErrorResponse("invalid cart item id", e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 }

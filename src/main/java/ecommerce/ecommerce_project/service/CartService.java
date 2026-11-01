@@ -1,5 +1,6 @@
 package ecommerce.ecommerce_project.service;
 
+import ecommerce.ecommerce_project.cartClass.CartDeleteRequest;
 import ecommerce.ecommerce_project.cartClass.CartItem;
 import ecommerce.ecommerce_project.cartClass.CartItemRequest;
 import ecommerce.ecommerce_project.cartClass.CartResponse;
@@ -9,6 +10,7 @@ import ecommerce.ecommerce_project.db.entities.UserEntity;
 import ecommerce.ecommerce_project.db.repositories.CartItemRepository;
 import ecommerce.ecommerce_project.db.repositories.ProductRepository;
 import ecommerce.ecommerce_project.db.repositories.UserRepository;
+import ecommerce.ecommerce_project.exeptions.CartItemNotFoundException;
 import ecommerce.ecommerce_project.exeptions.ProductNotFoundException;
 import ecommerce.ecommerce_project.exeptions.UserNotFoundException;
 import ecommerce.ecommerce_project.mappers.CartItemMapper;
@@ -67,5 +69,27 @@ public class CartService {
 
         return new CartResponse(cartTotalPrice, cartItems);
 
+    }
+
+    public String deleteFromCart(Long userId, Long cartItemId, @Valid CartDeleteRequest cartDeleteRequest) {
+        //user entity
+        UserEntity userEntity=userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
+        //searching product with userId and cartItemId
+        CartItemEntity cartItemEntity=cartItemRepository.findByUserEntityUserIdAndCartItemIdForUpdate(userId, cartItemId).orElseThrow(()->new CartItemNotFoundException(cartItemId));//??? create exception
+        //checking quantity, if more than in cart, throwing exception
+//        if (cartItemEntity.getQuantity()<cartDeleteRequest.quantity()){
+//            throw new InvalidQuantityException(cartItemEntity.getQuantity(), cartDeleteRequest.quantity());
+//        }
+        //removing specific quantity
+        cartItemEntity.setQuantity(cartItemEntity.getQuantity()-cartDeleteRequest.quantity());
+        //if quantity is negative or null, deleting it from cart
+        //???
+        if (cartItemEntity.getQuantity()<=0){
+            cartItemRepository.delete(cartItemEntity);
+        }
+        else { // if else, just saving new quantity
+            cartItemRepository.save(cartItemEntity);
+        }
+        return "deleted successfully";
     }
 }

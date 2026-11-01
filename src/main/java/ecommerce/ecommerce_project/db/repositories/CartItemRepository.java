@@ -58,4 +58,13 @@ SELECT c FROM CartItemEntity c
 WHERE c.userEntity.userId = :userId
 """)
 List<CartItemEntity> findByUserIdForUpdate(@Param("userId") Long userId);
+
+// getting product for deleting
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+SELECT ci FROM CartItemEntity ci
+WHERE ci.userEntity.userId=:userId
+AND ci.cartItemId=:cartItemId
+""")
+    Optional<CartItemEntity> findByUserEntityUserIdAndCartItemIdForUpdate(@Param("userId") Long userId, @Param("cartItemId") Long cartItemId);
 }

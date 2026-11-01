@@ -40,7 +40,7 @@ public class OrderService {
         //search user
         UserEntity userEntity = userRepository.findByUserIdForUpdate(userId).orElseThrow(UserNotFoundException::new);
         //getting total balance
-        Double totalPrice = cartItemRepository.getCartTotalPrice(userId).orElseThrow(EmptyCartException::new);
+        Double totalPrice = cartItemRepository.getCartTotalPrice(userId).orElseThrow(EmptyCartException::new); //??? there can be a free item
         //checking balance
         if (userEntity.getBalance() < totalPrice) {
             throw new BalanceException();
